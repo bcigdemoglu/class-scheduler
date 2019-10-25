@@ -1,6 +1,6 @@
 # app.py
 from flask import Flask, request, jsonify, render_template
-import CS_IA_revised as scheduler
+import CS_IA_revised2 as scheduler
 app = Flask(__name__)
 
 # A welcome message to test our server
@@ -10,8 +10,8 @@ def index():
 
 @app.route('/load_excel/', methods=['GET'])
 def load_excel():
-    excel_data = request.args.get("excel_data", "")
-    slot_count = request.args.get("slot_count", 0)
+    excel_data = request.args.get("excel_data", "", type=str)
+    slot_count = request.args.get("slot_count", 0, type=int)
     scheduler.load_classes(excel_data, slot_count)
     response = {}
     response["RESULT"] = True
@@ -19,7 +19,7 @@ def load_excel():
 
 @app.route('/get_classes/', methods=['GET'])
 def get_classes():
-    picked_slot = request.args.get("picked_slot", None)
+    picked_slot = request.args.get("picked_slot", None, type=int)
     response = {}
     classes = scheduler.get_potential_classes_for_slot(picked_slot)
     response["CLASSES"] = classes
@@ -27,8 +27,8 @@ def get_classes():
 
 @app.route('/select_class/', methods=['GET'])
 def select_class():
-    picked_slot = request.args.get("picked_slot", None)
-    class_name = request.args.get("class_name", None)
+    picked_slot = request.args.get("picked_slot", None, type=int)
+    class_name = request.args.get("class_name", None, type=str)
     scheduler.select_class_for_slot(class_name, picked_slot)
     response = {}
     response["RESULT"] = True
