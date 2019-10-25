@@ -147,8 +147,3 @@ def select_class_for_slot(class_name, slot_number):
     Do the necessary manipulation
     """
     return
-
-path = './class_combs.xlsx'
-num_slots = 5
-
-valid_schedules = main(path, num_slots)
