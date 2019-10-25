@@ -4,7 +4,7 @@ app = Flask(__name__)
 
 @app.route('/load_classes/', methods=['GET'])
 def load_classes():
-    return
+    return "Data sent for processing"
 
 @app.route('/get_potential_class/', methods=['GET'])
 def get_potential_class():

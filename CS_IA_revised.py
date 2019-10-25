@@ -120,7 +120,7 @@ def main(path, num_slots):
 
     return valid_schedules
 
-def load_classes(excel_data):
+def load_classes(excel_data, slot_count):
     """
     Load classes for a given excel_data string,
     containing 3 columns on each line separated by tabs.
