@@ -1,18 +1,45 @@
 # app.py
 from flask import Flask, request, jsonify, render_template
+import CS_IA_revised as scheduler
 app = Flask(__name__)
 
-@app.route('/load_classes/', methods=['GET'])
-def load_classes():
-    return "Data sent for processing"
+# A welcome message to test our server
+@app.route('/')
+def index():
+    return render_template("index.html")
 
-@app.route('/get_potential_class/', methods=['GET'])
-def get_potential_class():
-    return
+@app.route('/load_excel/', methods=['GET'])
+def load_excel():
+    excel_data = request.args.get("excel_data", "")
+    slot_count = request.args.get("slot_count", 0)
+    scheduler.load_classes(excel_data, slot_count)
+    response = {}
+    response["RESULT"] = True
+    return jsonify(response)
+
+@app.route('/get_classes/', methods=['GET'])
+def get_classes():
+    picked_slot = request.args.get("picked_slot", None)
+    response = {}
+    classes = scheduler.get_potential_classes_for_slot(picked_slot)
+    response["CLASSES"] = classes
+    return jsonify(response)
 
 @app.route('/select_class/', methods=['GET'])
 def select_class():
-    return
+    picked_slot = request.args.get("picked_slot", None)
+    class_name = request.args.get("class_name", None)
+    scheduler.select_class_for_slot(class_name, picked_slot)
+    response = {}
+    response["RESULT"] = True
+    return jsonify(response)
+
+@app.route('/reset_schedule/', methods=['GET'])
+def reset_schedule():
+    scheduler.reset_selections()
+    response = {}
+    response["RESULT"] = True
+    return jsonify(response)
 
 @app.route('/getmsg/', methods=['GET'])
 def respond():
@@ -71,11 +98,6 @@ def background_process():
 			return jsonify(result='Try again.')
 	except Exception as e:
 		return str(e)
-
-# A welcome message to test our server
-@app.route('/')
-def index():
-    return render_template("index.html")
 
 if __name__ == '__main__':
     # Threaded option to enable multiple instances for multiple user access support

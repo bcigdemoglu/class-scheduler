@@ -6,44 +6,144 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Index</title>
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <!-- jQuery library -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <!-- Latest compiled JavaScript -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
 		<script type=text/javascript>
-			$(function() {
-			  $('a#process_input').bind('click', function() {
-				$.getJSON('/background_process', {
-				  proglang: $('input[name="proglang"]').val(),
-				}, function(data) {
-				  $("#result").text(data.result);
-				});
-				return false;
-			  });
-			});
+      $(function() {
+        function disableOtherSlots(slot_number, slot_count) {
+          for (let sibling_slot = 0; sibling_slot < slot_count; sibling_slot++) {
+            if (sibling_slot === slot_number) {
+              continue;
+            }
+            $("#loading").css('width','200');
+            $("#loading").css('height','200');
+            $.getJSON('/get_classes/', {
+              picked_slot: sibling_slot
+            }, function(data) {
+              $(`#slot${sibling_slot} > option`).each(function() {
+                if (!data.CLASSES.includes(this.value)) {
+                  $(this).attr('disabled','disabled');
+                }
+              });
+              $("#loading").css('height','0');
+            });
+          } 
+        }
+
+        function formSlot(class_names, slot_number, slot_count) {
+          const slotId = `slot${slot_number}`;
+          const selectOpts = {
+            id: slotId,
+            size: class_names.length,
+            width: 200,
+          };
+          const slot = $('<select />', selectOpts);
+          for (const class_name of class_names) {
+            const optionsOpts = {value: class_name, text: class_name};
+              $('<option />', optionsOpts).appendTo(slot);
+          }
+          
+          $(slot).change(function() {
+            const class_name = $(`#${slotId} option:selected`).text();
+            // Disable siblings
+            $(`#${slotId} option:selected`).siblings().attr('disabled','disabled');
+
+            // Processing
+            $(slot).css('opacity', 0.3);
+            $("#loading").css('width','200');
+            $("#loading").css('height','200');
+            $.getJSON('/select_class/', {
+              class_name,
+              picked_slot: slot_number
+            }, function(data) {
+              // Disable other slots based on selection
+              disableOtherSlots(slot_number, slot_count);
+              // Done process
+              $("#loading").css('height','0');
+              $(slot).css('opacity', 1);
+            });
+          });
+          const slotdiv = $("<div />", {class: "slotDiv"});
+          $( "p" ).add( `<span>Slot ${slot_number + 1}\t\t</span>` ).appendTo(slotdiv);
+          slot.appendTo(slotdiv);
+          $("<br/>").appendTo(slotdiv);
+          slotdiv.appendTo('body');
+        }
+
+        function setupSlots(slot_count) {
+          for (let slot_number = 0; slot_number < slot_count; slot_number++) {
+            // Processing
+            $("#loading").css('width','200');
+            $("#loading").css('height','200');
+            $.getJSON('/get_classes/', {
+              picked_slot: slot_number
+            }, function(data) {
+              formSlot(data.CLASSES, slot_number, slot_count);
+              $("#loading").css('height','0');
+            });
+          }
+        }
+
+        $('a#load_excel').bind('click', function() {
+          // Processing
+          $("#excel_form").css('opacity', 0.3);
+          $("#loading").css('width','200');
+          $("#loading").css('height','200');
+          const excel_data = $('input[name="excel_data"]').val();
+          const slot_count = $('input[name="slot_count"]').val();
+          $.getJSON('/load_excel/', {
+            excel_data,
+            slot_count,
+          }, function(data) {
+            setupSlots(slot_count);
+            // Done process
+            $("#loading").css('height','0');
+            $("#excel_form").css('opacity', 0.7);
+            $('a#load_excel').remove();
+          });
+          return false;
+        });
+
+        $('a#reset_schedule').bind('click', function() {
+          $("select").css('opacity', 0.3);
+          $("#loading").css('width','200');
+          $("#loading").css('height','200');
+          $.getJSON('/reset_schedule/', {}, function(data) {
+            $(".slotDiv").remove();
+
+            const slot_count = $('input[name="slot_count"]').val();
+            setupSlots(slot_count);
+            // Done process
+            $("#loading").css('height','0');
+          });
+          return false;
+        });
+      });
 		</script>
 </head>
 
 <body>
-  <h1 style="color: blue">Class Scheduler</h1>
-  Number of exam slots: <input type=text size=5 name=slot_number>
-  <p>Copy paste excel file in the following format</p>
-  <form action="/load_classes/" method="GET">
-    </br>
-    ClassName1   ClassName2    Classname3
-    </br>
-    ClassName4   ClassName5    Classname6
-    </br>
-    ...
-    </br>
-    <textarea name="excel_data" rows="10" cols="30"></textarea>
-    <input type="submit" value="Submit">
-  </form>
-
-  <div class='container'>
-		<h3>Welcome! Which is the best programming language of them all?</h3>
-			<form>
-				<input type=text size=5 name=proglang>
-				<a href=# id=process_input><button class='btn btn-default'>Submit</button></a>
-			</form>
-		<p id=result></p>
+  <div class="container-fluid">
+    <h1 style="color: blue">Class Scheduler</h1>
+    <form id=excel_form >
+      Number of exam slots: <input type=text size=5 name=slot_count>
+      <p>Copy paste excel file in the following format</p>
+      </br>
+      ClassName1   ClassName2    Classname3
+      </br>
+      ClassName4   ClassName5    Classname6
+      </br>
+      ...
+      </br>
+      <textarea name="excel_data" rows="10" cols="30"></textarea>
+      <a href=# id=load_excel><button class='btn btn-default'>Submit</button></a>
+    </form>
+    <a href=# id=reset_schedule><button class='btn btn-default'>Reset Schedule Selections</button></a>
+    <img width=0 id=loading src="https://i.imgur.com/gwQOiTQ.gif">
   </div>
 </body>
 

@@ -131,14 +131,14 @@ def load_classes(excel_data, slot_count):
     Classname1 <tab> ClassName2 <tab> ClassName3
     Classname4 <tab> ClassName5 <tab> ClassName6
     """
-    return
+    return True
 
 def get_potential_classes_for_slot(slot_number):
     """
     Get the names of exams available to pick for a given slot_number
     Returns list of names of exams.
     """
-    return
+    return ["econ", "biz", "wtf"]
 
 def select_class_for_slot(class_name, slot_number):
     """
@@ -146,10 +146,10 @@ def select_class_for_slot(class_name, slot_number):
     Class name is selected from one of get_potential_classes_for_slot(slot_number)
     Do the necessary manipulation
     """
-    return
+    return True
 
 def reset_selections():
     """
     Resets all made selection, returning to initial state
     """
-    return
+    return True
