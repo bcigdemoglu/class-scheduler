@@ -1,3 +1,4 @@
+# https://class-scheduler-erel.herokuapp.com/
 # class-scheduler
 Built with guide: https://stackabuse.com/deploying-a-flask-application-to-heroku/
 
@@ -17,4 +18,4 @@ pip freeze > requirements.txt
 ```
 Make sure you commit the requirements file
 
-App located on Heroku: https://dashboard.heroku.com/apps/class-scheduler-erel/
+App dashboard on Heroku: https://dashboard.heroku.com/apps/class-scheduler-erel/
