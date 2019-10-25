@@ -93,8 +93,8 @@
           $("#excel_form").css('opacity', 0.3);
           $("#loading").css('width','200');
           $("#loading").css('height','200');
-          const excel_data = $('input[name="excel_data"]').val();
-          const slot_count = $('input[name="slot_count"]').val();
+          const excel_data = $('[name="excel_data"]').val();
+          const slot_count = $('[name="slot_count"]').val();
           $.getJSON('/load_excel/', {
             excel_data,
             slot_count,
