@@ -13,8 +13,8 @@
   <!-- Latest compiled JavaScript -->
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
 		<script type=text/javascript>
-      $(function() {
-        function disableOtherSlots(slot_number, slot_count) {
+      $(async function() {
+        async function disableOtherSlots(slot_number, slot_count) {
           for (let sibling_slot = 0; sibling_slot < slot_count; sibling_slot++) {
             // if (sibling_slot === slot_number) {
             //   continue;
@@ -34,7 +34,7 @@
           } 
         }
 
-        function formSlot(class_names, slot_number, slot_count) {
+        async function formSlot(class_names, slot_number, slot_count) {
           const slotId = `slot${slot_number}`;
           const selectOpts = {
             id: slotId,
@@ -59,9 +59,9 @@
             $.getJSON('/select_class/', {
               class_name,
               picked_slot: slot_number
-            }, function(data) {
+            }, async function(data) {
               // Disable other slots based on selection
-              disableOtherSlots(slot_number, slot_count);
+              await disableOtherSlots(slot_number, slot_count);
               // Done process
               $("#loading").css('height','0');
               $(slot).css('opacity', 1);
@@ -74,15 +74,15 @@
           slotdiv.appendTo('body');
         }
 
-        function setupSlots(slot_count) {
+        async function setupSlots(slot_count) {
           for (let slot_number = 0; slot_number < slot_count; slot_number++) {
             // Processing
             $("#loading").css('width','200');
             $("#loading").css('height','200');
             $.getJSON('/get_classes/', {
               picked_slot: slot_number
-            }, function(data) {
-              formSlot(data.CLASSES, slot_number, slot_count);
+            }, async function(data) {
+              await formSlot(data.CLASSES, slot_number, slot_count);
               $("#loading").css('height','0');
             });
           }
@@ -95,11 +95,13 @@
           $("#loading").css('height','200');
           const excel_data = $('[name="excel_data"]').val();
           const slot_count = $('[name="slot_count"]').val();
+          // const excel_data = 'Physics\tChemistry\tBusiness\nPhysics\tChemistry\tEcon\nPhysics\tCS\tEcon\nChemistry\tBiology\tEcon'
+          // const slot_count = 5
           $.getJSON('/load_excel/', {
             excel_data,
             slot_count,
-          }, function(data) {
-            setupSlots(slot_count);
+          }, async function(data) {
+            await setupSlots(slot_count);
             // Done process
             $("#loading").css('height','0');
             $("#excel_form").css('opacity', 0.7);
@@ -112,11 +114,11 @@
           $("select").css('opacity', 0.3);
           $("#loading").css('width','200');
           $("#loading").css('height','200');
-          $.getJSON('/reset_schedule/', {}, function(data) {
+          $.getJSON('/reset_schedule/', {}, async function(data) {
             $(".slotDiv").remove();
 
             const slot_count = $('input[name="slot_count"]').val();
-            setupSlots(slot_count);
+            await setupSlots(slot_count);
             // Done process
             $("#loading").css('height','0');
           });

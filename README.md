@@ -4,8 +4,9 @@ Built with guide: https://stackabuse.com/deploying-a-flask-application-to-heroku
 
 ## Running web server locally
 ```
+python -m venv venv/
 source venv/bin/activate
-pip install -r requirements
+pip install -r requirements.txt
 python app.py
 ```
 Then go to localhost:5000
