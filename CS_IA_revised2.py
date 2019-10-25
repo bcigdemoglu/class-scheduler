@@ -27,7 +27,7 @@ def get_class_name_ID_dicts(excel_data):
         class_name_to_class_ID[str(class_name)] = class_ID
         class_ID += 1
 
-    class_ID_to_class_name = {v: k for k, v in class_name_to_class_ID.iteritems()}
+    class_ID_to_class_name = {v: k for k, v in class_name_to_class_ID.items()}
     
 def get_class_name_combos_class_ID_combos(excel_data):
 
@@ -70,7 +70,7 @@ def get_valid_schedule_per_slot(A, num_combos, num_classes):
             
     return x_list
 
-def each_exam_is_in(x1, x2, x3, x4, x5, num_classes, num_slots):
+def each_exam_is_in(x1, x2, x3, x4, x5, num_classes):
     exam_is_in = True
     for i in range(num_classes):
         if x1[i] + x2[i] + x3[i] + x4[i] + x5[i] != 1:
@@ -78,7 +78,7 @@ def each_exam_is_in(x1, x2, x3, x4, x5, num_classes, num_slots):
             break
     return exam_is_in
 
-def get_valid_schedules(x_list, num_classes, num_slots):
+def get_valid_schedules(x_list, num_classes):
     
     x_list_final = []
     for x1 in tqdm(x_list):
@@ -86,7 +86,7 @@ def get_valid_schedules(x_list, num_classes, num_slots):
             for x3 in x_list:
                 for x4 in x_list:
                     for x5 in x_list:
-                        exam_is_in = each_exam_is_in(x1, x2, x3, x4, x5, num_classes, num_slots)
+                        exam_is_in = each_exam_is_in(x1, x2, x3, x4, x5, num_classes)
                         if exam_is_in:
                             x = (x1,x2,x3,x4,x5)
                             x_list_final.append(x)
@@ -117,7 +117,7 @@ def load_classes(excel_data, slot_count_):
     
     valid_schedule_per_slot = get_valid_schedule_per_slot(class_combo_matrix, num_combos, num_classes)
     
-    valid_schedules = get_valid_schedules(valid_schedule_per_slot, num_classes, num_slots)
+    valid_schedules = get_valid_schedules(valid_schedule_per_slot, num_classes)
     all_valid_schedules = deepcopy(valid_schedules)
     
     return
@@ -168,7 +168,6 @@ def reset_selections():
     
     return
     
-
 
 # excel_data = 'Physics\tChemistry\tBusiness\nPhysics\tChemistry\tEcon\nPhysics\tCS\tEcon\nChemistry\tBiology\tEcon'
 # slot_count_ = 5
