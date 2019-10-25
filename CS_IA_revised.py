@@ -2,10 +2,6 @@ import numpy as np
 from tqdm import tqdm
 import xlrd
 
-path = '/Users/erelpapo/Desktop/ERIK/class_combs.xlsx'
-wb = xlrd.open_workbook(path) 
-sheet = wb.sheet_by_index(0)
-
 def load_excel_sheet(path):
     
     path = '/Users/erelpapo/Desktop/ERIK/class_combs.xlsx'
@@ -125,8 +121,9 @@ def main(path, num_slots):
     
     return valid_schedules
 
+wb = xlrd.open_workbook(path) 
+sheet = wb.sheet_by_index(0)
 path = '/Users/erelpapo/Desktop/ERIK/class_combs.xlsx'
 num_slots = 5
 
 valid_schedules = main(path, num_slots)
-
