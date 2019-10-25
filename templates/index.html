@@ -16,9 +16,9 @@
       $(function() {
         function disableOtherSlots(slot_number, slot_count) {
           for (let sibling_slot = 0; sibling_slot < slot_count; sibling_slot++) {
-            if (sibling_slot === slot_number) {
-              continue;
-            }
+            // if (sibling_slot === slot_number) {
+            //   continue;
+            // }
             $("#loading").css('width','200');
             $("#loading").css('height','200');
             $.getJSON('/get_classes/', {
@@ -50,7 +50,7 @@
           $(slot).change(function() {
             const class_name = $(`#${slotId} option:selected`).text();
             // Disable siblings
-            $(`#${slotId} option:selected`).siblings().attr('disabled','disabled');
+            // $(`#${slotId} option:selected`).siblings().attr('disabled','disabled');
 
             // Processing
             $(slot).css('opacity', 0.3);
