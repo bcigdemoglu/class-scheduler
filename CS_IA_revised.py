@@ -147,3 +147,9 @@ def select_class_for_slot(class_name, slot_number):
     Do the necessary manipulation
     """
     return
+
+def reset_selections():
+    """
+    Resets all made selection, returning to initial state
+    """
+    return
