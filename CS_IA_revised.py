@@ -3,8 +3,7 @@ from tqdm import tqdm
 import xlrd
 
 def load_excel_sheet(path):
-    
-    path = '/Users/erelpapo/Desktop/ERIK/class_combs.xlsx'
+
     wb = xlrd.open_workbook(path) 
     sheet = wb.sheet_by_index(0)
     
@@ -118,12 +117,38 @@ def main(path, num_slots):
     valid_schedule_per_slot = get_valid_schedule_per_slot(class_combo_matrix, num_combos, num_classes)
     
     valid_schedules = get_valid_schedules(valid_schedule_per_slot, num_classes, num_slots)
-    
+
     return valid_schedules
 
-wb = xlrd.open_workbook(path) 
-sheet = wb.sheet_by_index(0)
-path = '/Users/erelpapo/Desktop/ERIK/class_combs.xlsx'
+def load_classes(excel_data):
+    """
+    Load classes for a given excel_data string,
+    containing 3 columns on each line separated by tabs.
+
+    Load the schedule to a global variable for later access.
+
+    E.g:
+    Classname1 <tab> ClassName2 <tab> ClassName3
+    Classname4 <tab> ClassName5 <tab> ClassName6
+    """
+    return
+
+def get_potential_classes_for_slot(slot_number):
+    """
+    Get the names of exams available to pick for a given slot_number
+    Returns list of names of exams.
+    """
+    return
+
+def select_class_for_slot(class_name, slot_number):
+    """
+    Select a class_name for a certain slot_number.
+    Class name is selected from one of get_potential_classes_for_slot(slot_number)
+    Do the necessary manipulation
+    """
+    return
+
+path = './class_combs.xlsx'
 num_slots = 5
 
 valid_schedules = main(path, num_slots)
