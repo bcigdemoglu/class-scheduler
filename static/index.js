@@ -1,13 +1,18 @@
-current_slot_count = 1;
-selected_table = {};
+let current_slot_count = 1;
+let selected_table = {};
+let loading_count = 0;
 
 function loading() {
   $("#loading").css('width','200');
   $("#loading").css('height','200');
+  loading_count++;
 }
 
 function done_loading() {
-  $("#loading").css('height','0');
+  loading_count--;
+  if (loading_count === 0) {
+    $("#loading").css('height','0');
+  }
 }
 
 async function disableOtherSlots(slot_count) {
@@ -75,13 +80,12 @@ async function formSlot(class_names, slot_number, slot_count) {
 async function setupSlots(slot_count) {
   for (let slot_number = 0; slot_number < slot_count; slot_number++) {
     // Processing
-    $("#loading").css('width','200');
-    $("#loading").css('height','200');
+    loading();
     $.getJSON('/get_classes/', {
       picked_slot: slot_number
     }, async function(data) {
       await formSlot(data.CLASSES, slot_number, slot_count);
-      $("#loading").css('height','0');
+      done_loading();
     });
   }
 }
@@ -91,8 +95,7 @@ $(function () {
   $('a#load_excel').bind('click', function() {
     // Processing
     $("#excel_form").css('opacity', 0.3);
-    $("#loading").css('width','200');
-    $("#loading").css('height','200');
+    loading();
     const excel_data = $('[name="excel_data"]').val();
     current_slot_count = $('[name="slot_count"]').val();
     // const excel_data = 'Physics\tChemistry\tBusiness\nPhysics\tChemistry\tEcon\nPhysics\tCS\tEcon\nChemistry\tBiology\tEcon'
@@ -100,10 +103,10 @@ $(function () {
     $.getJSON('/load_excel/', {
       excel_data,
       slot_count: current_slot_count,
-    }, async function(data) {
+    }, async function() {
       await setupSlots(current_slot_count);
       // Done process
-      $("#loading").css('height','0');
+      done_loading();
       $("#excel_form").css('opacity', 0.7);
       $('a#load_excel').remove();
     });
@@ -112,16 +115,15 @@ $(function () {
   
   $('a#reset_schedule').bind('click', function() {
     $("select").css('opacity', 0.3);
-    $("#loading").css('width','200');
-    $("#loading").css('height','200');
-    $.getJSON('/reset_schedule/', {}, function(data) {
+    loading();
+    $.getJSON('/reset_schedule/', {}, async function() {
       // Cleanup
       selected_table = {};
       $(".slotDiv").remove();
       const slot_count = $('input[name="slot_count"]').val();
-      setupSlots(slot_count);
+      await setupSlots(slot_count);
       // Done process
-      $("#loading").css('height','0');
+      done_loading();
     });
     return false;
   });
