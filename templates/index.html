@@ -12,128 +12,17 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <!-- Latest compiled JavaScript -->
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
-		<script type=text/javascript>
-      $(async function() {
-        async function disableOtherSlots(slot_number, slot_count) {
-          for (let sibling_slot = 0; sibling_slot < slot_count; sibling_slot++) {
-            // if (sibling_slot === slot_number) {
-            //   continue;
-            // }
-            $("#loading").css('width','200');
-            $("#loading").css('height','200');
-            $.getJSON('/get_classes/', {
-              picked_slot: sibling_slot
-            }, function(data) {
-              $(`#slot${sibling_slot} > option`).each(function() {
-                if (!data.CLASSES.includes(this.value)) {
-                  $(this).attr('disabled','disabled');
-                }
-              });
-              $("#loading").css('height','0');
-            });
-          } 
-        }
-
-        async function formSlot(class_names, slot_number, slot_count) {
-          const slotId = `slot${slot_number}`;
-          const selectOpts = {
-            id: slotId,
-            size: class_names.length,
-            width: 200,
-          };
-          const slot = $('<select />', selectOpts);
-          for (const class_name of class_names) {
-            const optionsOpts = {value: class_name, text: class_name};
-              $('<option />', optionsOpts).appendTo(slot);
-          }
-          
-          $(slot).change(function() {
-            const class_name = $(`#${slotId} option:selected`).text();
-            // Disable siblings
-            // $(`#${slotId} option:selected`).siblings().attr('disabled','disabled');
-
-            // Processing
-            $(slot).css('opacity', 0.3);
-            $("#loading").css('width','200');
-            $("#loading").css('height','200');
-            $.getJSON('/select_class/', {
-              class_name,
-              picked_slot: slot_number
-            }, async function(data) {
-              // Disable other slots based on selection
-              await disableOtherSlots(slot_number, slot_count);
-              // Done process
-              $("#loading").css('height','0');
-              $(slot).css('opacity', 1);
-            });
-          });
-          const slotdiv = $("<div />", {class: "slotDiv"});
-          $( "p" ).add( `<span>Slot ${slot_number + 1}\t\t</span>` ).appendTo(slotdiv);
-          slot.appendTo(slotdiv);
-          $("<br/>").appendTo(slotdiv);
-          slotdiv.appendTo('body');
-        }
-
-        async function setupSlots(slot_count) {
-          for (let slot_number = 0; slot_number < slot_count; slot_number++) {
-            // Processing
-            $("#loading").css('width','200');
-            $("#loading").css('height','200');
-            $.getJSON('/get_classes/', {
-              picked_slot: slot_number
-            }, async function(data) {
-              await formSlot(data.CLASSES, slot_number, slot_count);
-              $("#loading").css('height','0');
-            });
-          }
-        }
-
-        $('a#load_excel').bind('click', function() {
-          // Processing
-          $("#excel_form").css('opacity', 0.3);
-          $("#loading").css('width','200');
-          $("#loading").css('height','200');
-          const excel_data = $('[name="excel_data"]').val();
-          const slot_count = $('[name="slot_count"]').val();
-          // const excel_data = 'Physics\tChemistry\tBusiness\nPhysics\tChemistry\tEcon\nPhysics\tCS\tEcon\nChemistry\tBiology\tEcon'
-          // const slot_count = 5
-          $.getJSON('/load_excel/', {
-            excel_data,
-            slot_count,
-          }, async function(data) {
-            await setupSlots(slot_count);
-            // Done process
-            $("#loading").css('height','0');
-            $("#excel_form").css('opacity', 0.7);
-            $('a#load_excel').remove();
-          });
-          return false;
-        });
-
-        $('a#reset_schedule').bind('click', function() {
-          $("select").css('opacity', 0.3);
-          $("#loading").css('width','200');
-          $("#loading").css('height','200');
-          $.getJSON('/reset_schedule/', {}, async function(data) {
-            $(".slotDiv").remove();
-
-            const slot_count = $('input[name="slot_count"]').val();
-            await setupSlots(slot_count);
-            // Done process
-            $("#loading").css('height','0');
-          });
-          return false;
-        });
-      });
-		</script>
+  <script type="text/javascript" src="{{ url_for('static', filename='index.js') }}"></script>
 </head>
 
 <body>
   <div class="container-fluid">
-    <h1 style="color: blue">Koc Exam Scheduler v2</h1>
+    <h1 style="color: blue">Koc Exam Scheduler v3</h1>
     <form id=excel_form >
       Number of exam slots: <input type=text size=5 name=slot_count>
-      <p>Copy paste excel file in the following format</p>
+      <br>
+      Copy paste excel file in the following format:
+      <br>
       </br>
       ClassName1   ClassName2    Classname3
       </br>
