@@ -18,16 +18,17 @@ function done_loading() {
 async function disableOtherSlots(slot_count) {
   for (let sibling_slot = 0; sibling_slot < slot_count; sibling_slot++) {
     loading();
-    console.log(`getting classes for slot ${slot_count} to disable`);
+    console.log(`getting classes for slot ${sibling_slot} to disable`);
     $.getJSON('/get_classes/', {
       picked_slot: sibling_slot
     }, function(data) {
+      console.log(`done gettin classes ${data.CLASSES} to disable slot ${sibling_slot}`);
       $(`#slot${sibling_slot} > option`).each(function() {
         if (!data.CLASSES.includes(this.value)) {
           $(this).attr('disabled','disabled');
         }
       });
-      done_loading()
+      done_loading();
     });
   } 
 }
@@ -89,7 +90,7 @@ async function setupSlots(slot_count) {
     $.getJSON('/get_classes/', {
       picked_slot: slot_number
     }, async function(data) {
-      console.log("done gettin classes, forming up slot "+ slot_number);
+      console.log(`done gettin classes ${data.CLASSES}, forming up slot ${slot_number}`);
       await formSlot(data.CLASSES, slot_number, slot_count);
       done_loading();
     });

@@ -167,6 +167,17 @@ def reset_selections():
     valid_schedules = deepcopy(all_valid_schedules)
     
     return
+
+def get_all_potential_classes():
+    """
+    Returns a dictonary of potential classes for all slots
+    {
+        [slot_number]: [...classes_available]
+        ...
+    }
+    """
+
+    return
     
 
 # excel_data = 'Physics\tChemistry\tBusiness\nPhysics\tChemistry\tEcon\nPhysics\tCS\tEcon\nChemistry\tBiology\tEcon'
