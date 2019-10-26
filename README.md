@@ -20,3 +20,8 @@ pip freeze > requirements.txt
 Make sure you commit the requirements file
 
 App dashboard on Heroku: https://dashboard.heroku.com/apps/class-scheduler-erel/
+
+# Future Improvements
+
+### Use job scheduling to improve peformance
+https://devcenter.heroku.com/articles/python-rq
