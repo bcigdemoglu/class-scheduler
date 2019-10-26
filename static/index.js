@@ -18,6 +18,7 @@ function done_loading() {
 async function disableOtherSlots(slot_count) {
   for (let sibling_slot = 0; sibling_slot < slot_count; sibling_slot++) {
     loading();
+    console.log(`getting classes for slot ${slot_count} to disable`);
     $.getJSON('/get_classes/', {
       picked_slot: sibling_slot
     }, function(data) {
@@ -44,6 +45,8 @@ async function formSlot(class_names, slot_number, slot_count) {
     const optionsOpts = {value: class_name, text: class_name};
       $('<option />', optionsOpts).appendTo(slot);
   }
+
+  console.log("done with classes, adding listener to slot "+ slot_number);
   
   $(slot).change(function() {
     const class_name = $(`#${slotId} option:selected`).text();
@@ -60,6 +63,7 @@ async function formSlot(class_names, slot_number, slot_count) {
       class_name,
       picked_slot: slot_number
     }, async function(data) {
+      console.log(`selected class ${class_name}, getting classes for slots`);
       selected_table[class_name] = true;
       // Disable other slots based on selection
       await disableOtherSlots(slot_count);
@@ -81,9 +85,11 @@ async function setupSlots(slot_count) {
   for (let slot_number = 0; slot_number < slot_count; slot_number++) {
     // Processing
     loading();
+    console.log("getting classes for slot "+ slot_number);
     $.getJSON('/get_classes/', {
       picked_slot: slot_number
     }, async function(data) {
+      console.log("done gettin classes, forming up slot "+ slot_number);
       await formSlot(data.CLASSES, slot_number, slot_count);
       done_loading();
     });
@@ -100,10 +106,13 @@ $(function () {
     current_slot_count = $('[name="slot_count"]').val();
     // const excel_data = 'Physics\tChemistry\tBusiness\nPhysics\tChemistry\tEcon\nPhysics\tCS\tEcon\nChemistry\tBiology\tEcon'
     // current_slot_count = 5
+
+    console.log("loading excel");
     $.getJSON('/load_excel/', {
       excel_data,
       slot_count: current_slot_count,
     }, async function() {
+      console.log("loaded excel, setting up slots");
       await setupSlots(current_slot_count);
       // Done process
       done_loading();
